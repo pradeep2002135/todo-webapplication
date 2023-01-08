@@ -1,0 +1,355 @@
+1.add.css
+
+form{
+    width: 700px;
+    height: 550px;
+    background-color: blue;
+    color: white;
+    font-size : 15pt;
+    font-family: sans-serif;
+    margin: auto;
+    margin-top: 100px;
+}
+
+button{
+    margin-left: 48%;
+    margin-top: 30px;
+}
+button a{
+    padding: 5px 10px 5px 10px;
+    color: white;
+    text-decoration: none;
+    font-size: larger;
+}
+button a:hover{
+    color: white;
+}
+p{
+    margin-left: 30%;
+    color: white;
+}
+h3{
+    color: white;
+    margin-left: 45%;
+    padding-top: 5px;
+}
+.bg-success{
+    width:100%;
+    height: 50px;
+}
+form label{
+    margin-left : 20px;
+    margin-top: 10px;
+}
+form input{
+   padding: 5px 20px 5px 20px;
+}
+form textarea{
+    margin-top: 10px;
+    width: 285px;
+}
+#title{
+    margin: 50px 30px 10px 80px;
+}
+#description{
+    margin-left: 20px;
+}
+#priority{
+    margin-left: 60px;
+}
+#btn{
+    float: right;
+    margin-right: 20px;
+}
+
+
+2.ADD.PHP
+
+
+<?php
+session_start();
+$conn=mysqli_connect('localhost','pradeepp','pradeep123','todo');
+$show = array('title' => '', 'desc' => '' , 'deadline'=> '' );
+if(isset($_POST['add'])){
+	$title = $_POST['title'];
+    $description = $_POST['descriptionn'];
+    $deadline = $_POST['deadline'];
+	if(empty($_POST['title'])){
+		$show['title'] = '* Title is required *';
+	}else if(empty($_POST['descriptionn'])){
+        $show['desc'] = '* Description is required *';
+    }else if(empty($_POST['deadline'])){
+        $show['deadline'] = '*Deadline is required *';
+    }else{
+        function function_alert($message) {
+      
+            // Display the alert box 
+            echo "<script>alert('$message');</script>";
+        }
+        $query = "SELECT * FROM todolist WHERE title='$title' ";
+        $query_run = mysqli_query($conn,$query);
+        if (mysqli_num_rows($query_run)==1) 
+{
+    function_alert("This ToDo already exists !");
+}else{
+    $sql = "INSERT INTO todolist(title,descriptionn,deadline) VALUES ('$title','$description','$deadline')";
+        if(mysqli_query($conn,$sql)){
+            function_alert("New ToDo added !");
+        }else{
+            function_alert("*error interupt* --check DB connection ! ");
+        }
+}
+    }
+}
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Adding ToDo</title>
+        <link href="css/app.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="add.css" type="text/css" />
+    </head>
+    <body style="background-color: black;">
+        <div class="card bg-shadow rounded" style="background-color: black;">
+        <form action="#" method="POST">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" placeholder="title for your ToDo">
+            <p class="red-text" ><?php echo $show['title']; ?></p>
+            <br>
+            <label for="description">Description</label>
+            <textarea name="descriptionn" id="description"></textarea>
+            <p class="red-text" ><?php echo $show['desc'] ?></p>
+            <br>
+            <label for="priority">priority</label>
+            <input type="text" name="deadline" id="priority" placeholder="priority of this task">
+            <p class="red-text" ><?php echo $show['deadline'] ?></p>
+            <br>
+            <input class="btn btn-dark" type="submit" id="btn" name="add">
+        </form>
+        </div>
+        <br>
+        <br>
+        
+        <button class="btn btn-primary" ><a href="index.php">Go Back</a></button>
+    </body>
+</html>
+
+3.DELETE.CSS
+
+form{
+    width: 500px;
+    height: 300px;
+    background-color: blue;
+    color: white;
+    font-size : 15pt;
+    font-family: sans-serif;
+    margin: auto;
+    margin-top: 100px;
+}
+button{
+    margin-left: 48%;
+    margin-top: 30px;
+}
+button a{
+    padding: 5px 10px 5px 10px;
+    color: white;
+    text-decoration: none;
+    font-size: larger;
+}
+button a:hover{
+    color: white;
+}
+#btn{
+    float: right;
+    margin-right: 20px;
+    width : 100px;
+}
+label{
+    margin-top: 70px;
+    margin-left: 20px;
+}
+input{
+    margin-left: 30px ;
+    width:360px;
+}
+.bg-danger{
+    width:100%;
+    height: 50px;
+}
+p{
+    margin-left: 30%;
+    color: white;
+}
+h3{
+    color: white;
+    margin-left: 45%;
+    padding-top: 5px;
+}
+
+4.DELETE.PHP
+
+<?php
+session_start();
+$conn=mysqli_connect('localhost','pradeepp','pradeep123','todo');
+$show = array('title' => '');
+if(isset($_POST['del'])){
+	$title = $_POST['del_title'];
+	if(empty($_POST['del_title'])){
+		$show['title'] = '* Title is required *';
+	}else{
+        function function_alert($message) {
+      
+            // Display the alert box 
+            echo "<script>alert('$message');</script>";
+        }
+        $query = "SELECT * FROM todolist WHERE title='$title' ";
+        $query_run = mysqli_query($conn,$query);
+        if (mysqli_num_rows($query_run)==1) 
+{
+    $sql = "DELETE FROM todolist WHERE title= '$title'";
+        if(mysqli_query($conn,$sql)){
+            function_alert("Deletion completed !");
+        }else{
+            function_alert("*error interupt* --check DB connection ! ");
+        }
+}else{
+    function_alert("No such ToDo exist to delete --check again !");; 
+}
+        
+    }
+}
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>deleting-task</title>
+        <link href="css/app.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="delete.css" type="text/css" />
+    </head>
+    <body style="background-color: black;">
+        <form action="#" method="POST">
+            <label for="title">title</label>
+            <input type="text" placeholder="enter the title of the ToDo to delete" name="del_title">
+            <p class="red-text" ><?php echo $show['title']; ?></p>
+            <br>
+            <br>
+            <input class="btn btn-dark" type="submit" id="btn" name="del">
+        </form>
+        <br>
+        <br>
+        <button class="btn btn-primary" ><a href="index.php">Go Back</a></button>
+    </body>
+</html>
+
+5.INDEX.PHP
+
+<?php
+session_start();
+$conn=mysqli_connect('localhost','pradeepp','pradeep123','todo');
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My ToDos</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+            img{
+                width: 80%;
+                height: 850px;
+                margin-left: 0px;
+            }
+            .card{
+                width:500px;
+                height:auto;
+                margin:150px 70px 100px 100px;
+                border-width:7px;
+            }
+            button{
+                border-width:4px;
+            }
+            button a{
+                text-decoration:none;
+            }
+            button a:hover{
+                color:black;
+            }
+            button a b{
+                font-family: Sans-serif;
+                font-size: 12pt;
+            }
+            h4 a{
+                text-decoration: none;
+                color: black;
+            }
+            .desc{
+                display: none;
+            }
+            .title:hover + .desc{
+                display: block;
+                color: red;
+
+            }
+        </style>
+    </head>
+    <body style="background-color: black;">
+        <div class="row">
+            <div class="col">
+                <img src="todopic.jpg" alt="todo_image">
+            </div>
+            <div class="col" style="background-color: black;">
+                <div class="card border-secondary">
+                    <div class="card-header border-secondary bg-secondary text-white">
+                        <div class="row">
+                            <div class="col-8">
+                            <h2>< Things to do ></h2>
+                            </div>
+                            <div class="col" style=" margin-top : 10px;">
+                                <a href="add.php" class="rounded border-black bg-dark text-white" style="padding:10px;margin-left: 60px;text-decoration: none;"><b> New </b><i class="fa fa-plus" style="font-size: 15px;"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h5><b>TASK</b></h5>
+                            </div>
+                            <div class="col">
+                                <h5><b>PRIORITY</b></h5>
+                            </div>
+                        </div>
+                        <?php
+                        $sql = "SELECT title,deadline,descriptionn FROM todolist ";
+                        $result = mysqli_query($conn,$sql);
+                        if(mysqli_num_rows($result)>0){
+                            while($row = mysqli_fetch_assoc($result)){
+                                ?>
+                                <div class="row">
+                                        <div class="col">
+                                        <div class="title" style="cursor: pointer"><h4><?php echo $row['title'];?></h4></div>
+                                        <div class="desc"><p><?php echo $row['descriptionn'];?></p></div>
+                                        </div>
+                                        <div class="col">
+                                        <div class="deadline" style="cursor: pointer"><h4><?php echo $row['deadline'];?></h4></div>
+                                        </div>
+                                </div>
+                                <?php
+                            }
+                        }?>
+                    </div>
+                </div>
+                <div class="row" style="margin-left: 500px;">
+                <a href="delete.php"><b>Delete ?</b></a>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
+
+
+
+
+
